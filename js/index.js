@@ -24,27 +24,6 @@ async function loadAllEmployees() {
     }
 }
 
-/* delegated event handler, tbody is the static parent */
-// $('#tbl-employee>tbody').on('click', 'td:last-child > i', async (e) => {
-//     /* e. target is i */
-//     const empId = ($(e.target).parents('tr').children().first().next().text());
-//
-//     console.log(empId);
-//
-//     /* sending request to delete the selected employee */
-//     try {
-//         await $.ajax(`${API_URL}/${empId}`, {method: 'DELETE'});
-//         $(e.target).parents('tr').fadeOut(300, () => {
-//             $(e.target).parents('tr').remove();
-//
-//             if (!$('#tbl-employee>tbody>tr').length) $('#tbl-employee>tfoot').show();
-//
-//         }); /* delete the row from table with an animation */
-//     } catch (e) {
-//         alert("Failed to delete the employee, try again");
-//         console.error(e);
-//     }
-// });
 
 $('#btn-new-employee').on('click', e => {
     $('form').trigger('reset');
@@ -313,8 +292,41 @@ $('#tbl-employee>tbody').on('click', 'td:last-child > i', async (e) => {
 $('#tbl-employee>tbody').on('keydown', (e) => {
     if (e.code === 'Delete') {
         deleteEmployee(e);
+    } else if (e.code === 'ArrowUp') {
+        e.target.previousElementSibling.focus();
+        // loadEmpDetailsForUpdatingByArrowKeys(e);
+    } else if (e.code === 'ArrowDown') {
+        e.target.nextElementSibling.focus();
+        // loadEmpDetailsForUpdatingByArrowKeys(e);
     }
 });
+
+/* ToDo : check this function logic */
+async function loadEmpDetailsForUpdatingByArrowKeys(e) {
+    const empId = e.code === 'ArrowDown' ? e.target.nextElementSibling.children[0].text : e.target.previousElementSibling.children[0].text;
+    console.log(`empid selected by arrow key is ${empId}`);
+    const response = await axios.get(`${API_URL}/${empId}`);
+    if (response.status !== 200) {
+        throw new Error(response.status + " " + response.data);
+    }
+    let employee = response.data;
+
+    /* set details to fields */
+    $('#txt-id').val(employee.id);
+    $('#txt-name').val(employee.name);
+    $('#txt-address').val(employee.address);
+    if (employee.gender === 'male') {
+        $('#rd-male').prop('checked', true);
+    } else {
+        $('#rd-female').prop('checked', true);
+    }
+    $('#cb-department').val(employee.department);
+
+    isUpdating = true;
+    rowClickedEvent = e;
+    /*enable save button*/
+    $('#btn-save').prop('disabled', false);
+}
 
 $('#tbl-employee>tbody').on('click', (e) => {
     loadEmpDetailsForUpdating(e);
