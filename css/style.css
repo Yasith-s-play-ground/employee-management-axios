@@ -1,0 +1,87 @@
+body {
+    font-family: Ubuntu, system-ui, sans-serif;
+}
+
+table {
+
+
+    tbody > tr {
+        cursor: pointer;
+
+        &:focus {
+            outline: 1px solid dodgerblue;
+
+            td {
+                background-color: rgba(30, 144, 255, 0.06);
+            }
+        }
+    }
+
+    td {
+        vertical-align: middle;
+    }
+
+    td:nth-child(2) {
+        i {
+            padding-right: 5px;
+
+            &.bi-gender-male {
+                color: dodgerblue;
+            }
+
+            &.bi-gender-female {
+                color: orchid;
+            }
+        }
+    }
+
+    :is(td, th):is(:first-child,:last-child,:nth-last-child(2)) {
+        text-align: center;
+        width: 80px;
+    }
+
+    td:last-child > i {
+        font-size: 1.3rem;
+
+        &:hover {
+            color: #ff2600;
+        }
+    }
+
+    tr:has(td:last-child > i:hover) {
+        outline: 1px solid #ff2600;
+    }
+
+}
+
+form {
+    input, select, textarea {
+        text-align: center;
+    }
+
+    & > div > label {
+        font-weight: bold;
+
+        &::after {
+            content: "*";
+            color: rgba(255, 0, 0, 0.58);
+            padding-left: 5px;
+        }
+    }
+
+    label:has(input[type="radio"][name='gender'].is-invalid) {
+        color: red;
+    }
+}
+
+#progress-bar {
+    /*background-color: dodgerblue;*/
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#1e5799+0,2f29d1+30,2989d8+50,207cca+51,7db9e8+100 */
+    background: linear-gradient(to bottom,  #1e5799 0%,#2f29d1 30%,#2989d8 50%,#207cca 51%,#7db9e8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+    height: 4px;
+    position: fixed;
+    z-index: 1;
+    /*width: 50vw;*/
+    transition: width 10ms;
+}

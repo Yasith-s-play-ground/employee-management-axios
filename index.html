@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Employee Management System</title>
+
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./node_modules/animate.css/animate.min.css">
+
+    <!-- link google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script defer src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="./node_modules/jquery/dist/jquery.min.js"></script>
+
+    <!-- Axios -->
+    <script defer src="./node_modules/axios/dist/axios.min.js"></script>
+
+    <script defer src="./js/index.js"></script>
+
+</head>
+<body class="container">
+
+<div id="progress-bar"></div>
+
+<header class="pt-2 text-center border-bottom">
+    <h1>Employee Management System</h1>
+</header>
+
+<main class="row">
+
+    <form class="col-12 col-lg-4" action="javascript:void(0)" novalidate>
+        <div class="mt-2 d-flex justify-content-between border-bottom pb-2">
+            <div class="fs-5 fw-bold">EMPLOYEE DETAILS</div>
+            <button class="btn btn-success btn-sm" type="button" id="btn-new-employee">
+                + NEW EMPLOYEE
+            </button>
+        </div>
+
+        <div class="mt-2">
+            <label for="txt-id" class="form-label">
+                Employee ID
+            </label>
+            <input disabled id="txt-id" type="text" class="form-control"
+                   placeholder="Generated ID">
+        </div>
+
+        <!-- name -->
+        <div class="mt-2">
+            <label class="form-label" for="txt-name">Employee Name</label>
+            <input placeholder="Eg. Kasun Sampath" class="form-control" id="txt-name" type="text">
+            <div class="invalid-feedback"></div>
+        </div>
+
+        <!-- address-->
+        <div class="mt-2">
+            <label class="form-label" for="txt-address">Employee Address</label>
+            <textarea id="txt-address" class="form-control"
+                      placeholder="Eg. 10B, Grace Peries Road, Panadura"></textarea>
+            <div class="invalid-feedback">Address should have at least 3 characters</div>
+        </div>
+
+        <!-- gender -->
+        <div class="mt-2 border p-2">
+            <label class="form-label" for="rd-male">Employee Gender</label>
+            <div class="d-flex gap-4 border-top pt-2 justify-content-center">
+                <label><input id="rd-male" class="form-check-input" type="radio" name="gender" value="male">
+                    Male</label>
+                <label><input id="rd-female" class="form-check-input" type="radio" name="gender" value="female">
+                    Female</label>
+            </div>
+        </div>
+
+<!-- department -->
+        <div class="mt-2">
+            <label class="form-label" for="txt-name">Employee Department</label>
+            <select id="cb-department" class="form-select">
+                <!--initial option-->
+                <option value="no-department"></option>
+                <option value="Academic">Academic</option>
+                <option value="Human Resource">Human Resource</option>
+                <option value="IT/SE">IT/SE</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Finance">Finance</option>
+            </select>
+            <div class="invalid-feedback">Employee Department cannot be empty</div>
+        </div>
+
+        <!-- save and reset buttons -->
+        <div class="mt-3">
+            <button id="btn-save" disabled class="btn btn-primary btn-sm">SAVE</button>
+            <button class="btn btn-outline-danger btn-sm" type="reset">CLEAR</button>
+        </div>
+    </form>
+
+    <section class="col-12 col-lg-8 p-0">
+        <table id="tbl-employee" class="mt-3 table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>DEPARTMENT</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider">
+            <!--                    <tr tabindex="0">-->
+            <!--                        <td>E-001</td>-->
+            <!--                        <td>-->
+            <!--                            <i class="bi bi-gender-male"></i>-->
+            <!--                            Kasun Sampath-->
+            <!--                        </td>-->
+            <!--                        <td>IT</td>-->
+            <!--                        <td><i data-bs-toggle="tooltip" data-bs-title="Delete" class="bi bi-trash3-fill"></i></td>-->
+            <!--                    </tr>-->
+            </tbody>
+            <tfoot class="table-group-divider">
+            <tr>
+                <td colspan="4" class="text-center">
+                    No Employee Records Found!
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </section>
+
+</main>
+
+</body>
+</html>
