@@ -3,9 +3,13 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-const API_URL = 'http://localhost:3001/employees/';
+const API_URL = 'http://localhost:3001/employees';
 
 loadAllEmployees();
+
+let isUpdating = false;
+
+let rowClickedEvent = undefined;
 
 async function loadAllEmployees() {
     const employeeList = await $.ajax(API_URL);
@@ -47,6 +51,7 @@ $('#btn-new-employee').on('click', e => {
     $('#txt-id').val(generateNewId());
     $('#txt-name').trigger('focus');
     $('#btn-save').prop('disabled', false);
+    isUpdating = false;
 });
 
 function generateNewId() {
@@ -61,8 +66,8 @@ function generateNewId() {
 $('form').on('submit', (event) => {
     event.preventDefault();
     if (!validateData()) return;
-
-    saveEmployee();
+    if (!isUpdating) saveEmployee();
+    else updateEmployee();
 });
 
 // function saveEmployee() {
@@ -137,6 +142,46 @@ async function saveEmployee() {
     } finally {
         $('#btn-new-employee, form :is(input, button, textarea, select)').prop('disabled', false);
     }
+}
+
+async function updateEmployee() {
+    const updatedEmployee = {
+        id: $('#txt-id').val().trim(),
+        name: $('#txt-name').val().trim(),
+        address: $('#txt-address').val().trim(),
+        gender: $('input[type="radio"][name="gender"]:checked').val(),
+        department: $('#cb-department').val()
+    }
+
+    try {
+        $('#btn-new-employee, form :is(input, button, textarea, select)').prop('disabled', true);
+        const response = await axios(`${API_URL}/${updatedEmployee.id}`, {
+            method: 'PATCH',
+            data: updatedEmployee,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status !== 200 && response.status !== 204) {
+            throw new Error(response.status + " " + response.data);
+        }
+        alert('updated');
+        updateEmployeeRow(updatedEmployee);
+    } catch (e) {
+        alert('Failed to update employee');
+        console.error(e);
+    } finally {
+        $('#btn-new-employee, form :is(input, button, textarea, select)').prop('disabled', false);
+    }
+}
+
+function updateEmployeeRow({id, name, gender, department}) {
+    const updatingRow = $(rowClickedEvent.target).parents('tr');
+    updatingRow.children().first().next().html(`<i class="bi bi-gender-${gender} pt-0 pb-0"></i>
+        ${name}`);
+    updatingRow.children().first().next().next().text(department);
+    $('form').trigger('reset');
 }
 
 
@@ -253,13 +298,8 @@ async function deleteEmployee(e) {
             });
         }
 
-        // await $.ajax(`${API_URL}/${empId}`, {method: 'DELETE'});
-        // $(e.target).parents('tr').fadeOut(300, () => {
-        //     $(e.target).parents('tr').remove();
-        //
-        //     if (!$('#tbl-employee>tbody>tr').length) $('#tbl-employee>tfoot').show();
-        //
-        // }); /* delete the row from table with an animation */
+        $('form').trigger('reset');
+
     } catch (e) {
         alert("Failed to delete the employee, try again");
         console.error(e);
@@ -272,8 +312,35 @@ $('#tbl-employee>tbody').on('click', 'td:last-child > i', async (e) => {
 
 $('#tbl-employee>tbody').on('keydown', (e) => {
     if (e.code === 'Delete') {
-        console.log('delete');
         deleteEmployee(e);
     }
 });
 
+$('#tbl-employee>tbody').on('click', (e) => {
+    loadEmpDetailsForUpdating(e);
+});
+
+async function loadEmpDetailsForUpdating(e) {
+    const empId = $(e.target).parents('tr').children().first().text();
+    const response = await axios.get(`${API_URL}/${empId}`);
+    if (response.status !== 200) {
+        throw new Error(response.status + " " + response.data);
+    }
+    let employee = response.data;
+
+    /* set details to fields */
+    $('#txt-id').val(employee.id);
+    $('#txt-name').val(employee.name);
+    $('#txt-address').val(employee.address);
+    if (employee.gender === 'male') {
+        $('#rd-male').prop('checked', true);
+    } else {
+        $('#rd-female').prop('checked', true);
+    }
+    $('#cb-department').val(employee.department);
+
+    isUpdating = true;
+    rowClickedEvent = e;
+    /*enable save button*/
+    $('#btn-save').prop('disabled', false);
+}
